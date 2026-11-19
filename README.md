@@ -45,11 +45,28 @@ yarac64 -w -d filename= -d filepath= -d extension= -d filetype= -d owner= docsca
 yara64 -w --docscan-json -C rules.yarc <file>
 ```
 
-On a PC the rules are installed and updated together with DocScan (`DocScan-Install.ps1`, the DocScanUpdater service).
+### On a PC
+
+Download the rules bundle of a release **before** installing DocScan and give it to the installer:
+
+```powershell
+# https://github.com/rifatismailov/yara-docscan-rules/releases/latest/download/DocScan-rules-bundle.zip
+powershell -ExecutionPolicy Bypass -File DocScan-Install.ps1 -Rules C:\Temp\DocScan-rules-bundle.zip   # or a URL / UNC path
+```
+
+The installer checks the DocScan CI signature and every file, compiles the rules and only then installs; without
+rules DocScan is not installed. Afterwards the DocScanUpdater service keeps the rules up to date on its own (GitHub,
+an organisation mirror or an agent marker) and rolls back when the watcher does not start with new rules.
+
+### Releases
+
+`vX.Y.Z` (own numbering): `DocScan-rules-bundle.zip` (manual install), `DocScan-rules.zip` + `rules-manifest.json` +
+`rules-manifest.sig` (the updater). Signed with ed25519 by the DocScan CI; compiled with DocScan's `yarac` before
+publishing.
 
 ## Status
 
-This repository is the new home of the DocScan rule set: for now it mirrors `docscan-project/rules` of
-[yara-docscan](https://github.com/rifatismailov/yara-docscan), and releases of DocScan still ship the rules from
-there. Next: signed rule bundles (manifest + ed25519 signature, like the program releases) tested by CI on the
-corpora before publishing, and rule-only updates on the PCs.
+This repository is the home of the DocScan rule set; signed releases and rule-only updates on the PCs work. For a
+transition period the DocScan program package still carries a copy of the rules (`docscan-project/rules` of
+[yara-docscan](https://github.com/rifatismailov/yara-docscan)); next, the program comes without rules and CI tests
+the rules on the corpora before each rules release.
