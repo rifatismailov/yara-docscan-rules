@@ -64,9 +64,18 @@ an organisation mirror or an agent marker) and rolls back when the watcher does 
 `rules-manifest.sig` (the updater). Signed with ed25519 by the DocScan CI; compiled with DocScan's `yarac` before
 publishing.
 
+**Every release is checked first** (DocScan CI, `cirun rules-release`); any red check stops the release:
+
+- the DocScan test suite with these rules: attack-vector samples against their expected verdicts (verdict, disarm,
+  rescan), critical-information mode, malformed (hostile) files, public document corpora, real malware samples
+  (scanned only, never executed) that must be detected and known clean files that must not alarm;
+- against the previous release, on the same files: **no new alarms** on corpus documents that had none, **no lost
+  detections** on the malware samples, and the scan is not markedly slower.
+
+The release notes list what was checked, with the numbers.
+
 ## Status
 
-This repository is the home of the DocScan rule set; signed releases and rule-only updates on the PCs work. For a
-transition period the DocScan program package still carries a copy of the rules (`docscan-project/rules` of
-[yara-docscan](https://github.com/rifatismailov/yara-docscan)); next, the program comes without rules and CI tests
-the rules on the corpora before each rules release.
+This repository is the only home of the DocScan rule set: signed releases, rule-only updates on the PCs, and the
+DocScan program package comes without rules (since v1.0.6 of [yara-docscan](https://github.com/rifatismailov/yara-docscan)).
+CI tests the rules on the corpora before each rules release (see *Releases*).
